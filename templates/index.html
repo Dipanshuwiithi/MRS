@@ -179,15 +179,89 @@
     <h1>Find Your Next Favourite Movie 🍿</h1>
 
     <!-- Form -->
-    <form method="POST">
-        <select name="movie" required>
-            <option value="">Select a Movie</option>
-            {% for movie in movie_list %}
-                <option value="{{ movie }}" {% if selected_movie == movie %}selected{% endif %}>{{ movie }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Show Recommendations</button>
-    </form>
+    <form method="POST" autocomplete="off">
+    <div class="autocomplete-container" style="position: relative; width: 320px; margin: auto;">
+        <input 
+            type="text" 
+            name="movie" 
+            id="movie-input" 
+            placeholder="Type or select a movie..." 
+            required
+            style="
+                padding: 12px;
+                width: 100%;
+                border-radius: 8px;
+                border: none;
+                outline: none;
+                font-size: 15px;
+                background-color: rgba(34, 34, 34, 0.8);
+                color: #fff;
+                box-shadow: 0 0 10px rgba(255, 75, 43, 0.2);
+            "
+        >
+        <div id="autocomplete-list" 
+             style="
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: rgba(28,28,28,0.95);
+                max-height: 200px;
+                overflow-y: auto;
+                border-radius: 0 0 8px 8px;
+                z-index: 999;
+                display: none;
+             ">
+        </div>
+    </div>
+    <button type="submit" style="margin-top: 15px;">Show Recommendations</button>
+</form>
+
+<!-- JavaScript for typeahead -->
+<script>
+    const movieList = [
+        {% for movie in movie_list %}
+            "{{ movie }}",
+        {% endfor %}
+    ];
+
+    const input = document.getElementById("movie-input");
+    const autocompleteList = document.getElementById("autocomplete-list");
+
+    input.addEventListener("input", function() {
+        const val = this.value.toLowerCase();
+        autocompleteList.innerHTML = "";
+        if (!val) { autocompleteList.style.display = "none"; return; }
+
+        const filtered = movieList.filter(m => m.toLowerCase().includes(val));
+        if (filtered.length === 0) { autocompleteList.style.display = "none"; return; }
+
+        filtered.forEach(movie => {
+            const div = document.createElement("div");
+            div.textContent = movie;
+            div.style.padding = "8px";
+            div.style.cursor = "pointer";
+            div.style.color = "#fff";
+            div.addEventListener("click", () => {
+                input.value = movie;
+                autocompleteList.innerHTML = "";
+                autocompleteList.style.display = "none";
+            });
+            div.addEventListener("mouseover", () => div.style.background = "rgba(255,75,43,0.3)");
+            div.addEventListener("mouseout", () => div.style.background = "transparent");
+            autocompleteList.appendChild(div);
+        });
+
+        autocompleteList.style.display = "block";
+    });
+
+    // Hide list when clicking outside
+    document.addEventListener("click", function(e) {
+        if (!e.target.closest(".autocomplete-container")) {
+            autocompleteList.style.display = "none";
+        }
+    });
+</script>
 
     <!-- Recommendations -->
     {% if recommendations %}
