@@ -1,0 +1,6 @@
+Flask
+pandas
+requests
+gunicorn
+pickle5
+-e .
