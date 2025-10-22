@@ -6,148 +6,179 @@
     <title>Movie Recommender System</title>
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        /* ===== BODY & VIDEO ===== */
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #0b0b0b;
             color: #fff;
             margin: 0;
             padding: 0;
             text-align: center;
+            overflow-x: hidden;
         }
 
-        h1 {
-            margin-top: 30px;
-            font-size: 2.5rem;
-            color: #ff4b2b;
-            text-shadow: 0 0 10px #ff1c00;
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            filter: brightness(0.3) blur(2px);
         }
 
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.6);
+            z-index: -1;
+        }
+
+        /* ===== NAVBAR ===== */
+        nav {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: rgba(20, 20, 20, 0.65);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px;
+            box-shadow: 0 0 15px rgba(255, 75, 43, 0.3);
+            z-index: 1000;
+        }
+
+        nav h2 { margin: 0; color: #ff4b2b; font-size: 1.6rem; letter-spacing: 1px; }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background-color: #ff4b2b;
+            transition: all 0.3s ease;
+        }
+        nav a:hover { background-color: #ff1c00; box-shadow: 0 0 12px #ff1c00; }
+
+        /* ===== MAIN ===== */
+        h1 { margin-top: 50px; font-size: 2.8rem; color: #ff4b2b; text-shadow: 0 0 15px #ff1c00; }
         form {
-            margin: 30px auto;
+            margin: 35px auto;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 15px;
         }
-
         select {
-            padding: 10px;
-            width: 300px;
+            padding: 12px;
+            width: 320px;
             border-radius: 8px;
             border: none;
             outline: none;
             font-size: 15px;
-            background-color: #222;
+            background-color: rgba(34, 34, 34, 0.8);
             color: #fff;
+            box-shadow: 0 0 10px rgba(255, 75, 43, 0.2);
         }
-
         button {
-            padding: 10px 20px;
+            padding: 10px 25px;
             background-color: #ff4b2b;
             color: white;
             border: none;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease;
+            font-size: 15px;
+            transition: all 0.3s ease;
         }
+        button:hover { background-color: #ff1c00; box-shadow: 0 0 15px #ff1c00; }
 
-        button:hover {
-            background-color: #ff1c00;
-        }
+        h2 { margin-top: 35px; color: #ff4b2b; text-shadow: 0 0 8px #ff1c00; }
 
-        h2 {
-            margin-top: 30px;
-            color: #ff4b2b;
-            text-shadow: 0 0 8px #ff1c00;
-        }
-
+        /* ===== MOVIES GRID ===== */
         .movies {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 25px;
             justify-items: center;
-            margin: 40px auto;
-            max-width: 1000px;
+            margin: 50px auto;
+            max-width: 1100px;
             padding: 0 20px;
         }
 
         .movie-card {
             width: 180px;
-            background-color: #1c1c1c;
+            background-color: rgba(28, 28, 28, 0.9);
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 0 15px rgba(255, 75, 43, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 18px rgba(255, 75, 43, 0.25);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeUp 0.6s forwards;
         }
+
+        /* Stagger animation using delay for each card */
+        {% for i in range(5) %}
+        .movie-card:nth-child({{ i+1 }}) { animation-delay: {{ i*0.15 }}s; }
+        {% endfor %}
 
         .movie-card:hover {
             transform: scale(1.07);
-            box-shadow: 0 0 25px rgba(255, 75, 43, 0.5);
+            box-shadow: 0 0 25px rgba(255, 75, 43, 0.6);
         }
 
-        .movie-card img {
-            width: 100%;
-            height: 270px;
-            object-fit: cover;
+        .movie-card img { width: 100%; height: 270px; object-fit: cover; }
+        .movie-card h3 { font-size: 16px; margin: 10px 0 0 0; color: #ff4b2b; }
+        .movie-card p { font-size: 14px; color: #ccc; margin: 4px 0 10px 0; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .movie-card h3 {
-            font-size: 16px;
-            margin: 10px 0 0 0;
-            color: #ff4b2b;
-        }
-
-        .movie-card p {
-            font-size: 14px;
-            color: #ccc;
-            margin: 4px 0 10px 0;
-        }
-
-        /* Responsive Design */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-            select {
-                width: 90%;
-                font-size: 14px;
-            }
-            button {
-                width: 90%;
-            }
-            .movie-card {
-                width: 160px;
-            }
-            .movie-card img {
-                height: 240px;
-            }
+            nav h2 { font-size: 1.3rem; }
+            h1 { font-size: 2rem; }
+            select, button { width: 85%; font-size: 14px; }
+            .movie-card { width: 160px; }
+            .movie-card img { height: 240px; }
         }
 
         @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            form {
-                gap: 10px;
-            }
-            .movies {
-                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-                gap: 15px;
-            }
-            .movie-card {
-                width: 140px;
-            }
-            .movie-card img {
-                height: 210px;
-            }
+            nav { flex-direction: column; gap: 10px; }
+            h1 { font-size: 1.8rem; margin-top: 25px; }
+            .movies { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+            .movie-card { width: 140px; }
+            .movie-card img { height: 210px; }
         }
     </style>
 </head>
 
 <body>
-    <h1>🎬 Movie Recommender System (Flask)</h1>
+    <!-- Background Video -->
+    <video autoplay muted loop id="bg-video">
+        <source src="https://cdn.videvo.net/videvo_files/video/free/2016-06/small_watermarked/160523_Cinema_006_preview.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
 
+    <!-- Navbar -->
+    <nav>
+        <h2>🎬 Movie Recommender</h2>
+        <a href="https://github.com/Dipanshuwiithi/Movie-Recommendation-System" target="_blank">GitHub ↗</a>
+    </nav>
+
+    <!-- Title -->
+    <h1>Find Your Next Favourite Movie 🍿</h1>
+
+    <!-- Form -->
     <form method="POST">
         <select name="movie" required>
             <option value="">Select a Movie</option>
@@ -158,6 +189,7 @@
         <button type="submit">Show Recommendations</button>
     </form>
 
+    <!-- Recommendations -->
     {% if recommendations %}
         <h2>Top 5 Recommendations for "{{ selected_movie }}"</h2>
         <div class="movies">
