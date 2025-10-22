@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Recommender System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
+            text-align: center;
+        }
+        h1 { margin-top: 30px; }
+        form {
+            margin: 20px auto;
+        }
+        select {
+            padding: 8px;
+            width: 300px;
+            border-radius: 5px;
+        }
+        button {
+            padding: 8px 20px;
+            border: none;
+            background-color: #ff4b2b;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff1c00;
+        }
+        .movies {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .movie-card {
+            width: 180px;
+            margin: 10px;
+            background-color: #222;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .movie-card img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .movie-card h3 {
+            font-size: 16px;
+            margin: 8px 0 5px 0;
+        }
+        .movie-card p {
+            font-size: 14px;
+            color: #ccc;
+            margin: 3px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎬 Movie Recommender System (Flask)</h1>
+
+    <form method="POST">
+        <select name="movie" required>
+            <option value="">Select a Movie</option>
+            {% for movie in movie_list %}
+                <option value="{{ movie }}" {% if selected_movie == movie %}selected{% endif %}>{{ movie }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Show Recommendation</button>
+    </form>
+
+    {% if recommendations %}
+        <div class="movies">
+            {% for rec in recommendations %}
+                <div class="movie-card">
+                    <img src="{{ rec.poster }}" alt="{{ rec.title }}">
+                    <h3>{{ rec.title }}</h3>
+                    <p>Year: {{ rec.year }}</p>
+                    <p>⭐ Rating: {{ rec.rating }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</body>
+</html>
