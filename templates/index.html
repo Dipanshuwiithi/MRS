@@ -1,384 +1,852 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Recommender System</title>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
-        /* ===== BODY & VIDEO ===== */
-        body {
-            font-family: 'Poppins', sans-serif;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-            overflow-x: hidden;
-        }
-
-        #bg-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -2;
-            filter: brightness(0.3) blur(2px);
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 10, 0.6);
-            z-index: -1;
-        }
-        
-        /* ===== MAIN ===== */
-        h1 { margin-top: 130px; font-size: 2.8rem; color: #ff4b2b; text-shadow: 0 0 15px #ff1c00; }
-        form {
-            margin: 35px auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-        select {
-            padding: 12px;
-            width: 320px;
-            border-radius: 8px;
-            border: none;
-            outline: none;
-            font-size: 15px;
-            background-color: rgba(34, 34, 34, 0.8);
-            color: #fff;
-            box-shadow: 0 0 10px rgba(255, 75, 43, 0.2);
-        }
-        button {
-            padding: 10px 25px;
-            background-color: #ff4b2b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 15px;
-            transition: all 0.3s ease;
-        }
-        button:hover { background-color: #ff1c00; box-shadow: 0 0 15px #ff1c00; }
-
-        h2 { margin-top: 35px; color: #ff4b2b; text-shadow: 0 0 8px #ff1c00; }
-
-        /* ===== MOVIES GRID ===== */
-        .movies {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 25px;
-            justify-items: center;
-            margin: 50px auto;
-            max-width: 1100px;
-            padding: 0 20px;
-        }
-
-        .movie-card {
-            width: 180px;
-            background-color: rgba(28, 28, 28, 0.9);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 0 18px rgba(255, 75, 43, 0.25);
-            transform: translateY(20px);
-            opacity: 0;
-            animation: fadeUp 0.6s forwards;
-        }
-
-        /* Stagger animation using delay for each card */
-        {% for i in range(5) %}
-        .movie-card:nth-child({{ i+1 }}) { animation-delay: {{ i*0.15 }}s; }
-        {% endfor %}
-
-        .movie-card:hover {
-            transform: scale(1.07);
-            box-shadow: 0 0 40px rgba(255, 75, 43, 0.6);
-        }
-
-        .movie-card img { width: 100%; height: 270px; object-fit: cover; }
-        .movie-card h3 { font-size: 16px; margin: 10px 0 0 0; color: #ff4b2b; }
-        .movie-card p { font-size: 14px; color: #ccc; margin: 4px 0 10px 0; }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            nav h2 { font-size: 1.3rem; }
-            h1 { font-size: 2rem; }
-            select, button { width: 85%; font-size: 14px; }
-            .movie-card { width: 160px; }
-            .movie-card img { height: 240px; }
-        }
-
-        @media (max-width: 480px) {
-            nav { flex-direction: column; gap: 10px; }
-            h1 { font-size: 1.8rem; margin-top: 25px; }
-            .movies { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
-            .movie-card { width: 140px; }
-            .movie-card img { height: 210px; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MovieFlix</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/742/742751.png" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      overflow-x: hidden;
+      background: linear-gradient(180deg, #000 0%, #161618 50%, #000 100%);
+      min-height: 100vh;
+    }
+    
+    header {
+      background-color: #000;
+      padding: 1.2rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(229, 9, 20, 0.3);
+    }
+    
+    header h1 {
+      color: #e50914;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      margin: 0;
+      text-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
+    }
+    
+    form {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 0;
+      padding: 0 1rem;
+    }
+    
+    input, button {
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      border: none;
+      font-size: 1rem;
+    }
+    
+    input {
+      width: 300px;
+      max-width: 100%;
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #333;
+      transition: border-color 0.3s ease;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #e50914;
+    }
+    
+    button {
+      background-color: #e50914;
+      color: #fff;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+    
+    button:hover {
+      background-color: #b00610;
+      transform: translateY(-2px);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .movie-row {
+      padding: 1rem 3rem;
+    }
+    
+    .movie-row h2 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      text-align: left;
+      padding-left: 10px;
+    }
+    
+    .movie-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+    }
+    
+    /* Carousel Styles */
+    .carousel-wrapper {
+      position: relative;
+      max-width: 1400px;
+      margin: 30px auto;
+      padding: 0 60px;
+    }
+    
+    .carousel-container {
+      overflow: hidden;
+    }
+    
+    .carousel-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 20px 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    .carousel-track::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .carousel-track .movie-card {
+      flex: 0 0 240px;
+      margin-right: 15px;
+    }
+    
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0,0,0,0.7);
+      color: white;
+      border: 2px solid rgba(229, 9, 20, 0.5);
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 20;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+    }
+    
+    .carousel-btn:hover {
+      background-color: rgba(229, 9, 20, 0.9);
+      border-color: #e50914;
+      transform: translateY(-50%) scale(1.1);
+    }
+    
+    .carousel-btn.prev {
+      left: 5px;
+    }
+    
+    .carousel-btn.next {
+      right: 5px;
+    }
+    
+    /* Movie Card */
+    .movie-card {
+      width: 240px;
+      height: 360px;
+      background-color: rgba(28, 28, 28, 0.9);
+      border-radius: 15px;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    
+    .movie-grid .movie-card {
+      animation: fadeUp 0.6s forwards;
+    }
+    
+    @keyframes fadeUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    .movie-grid .movie-card:nth-child(1) { animation-delay: 0.0s; }
+    .movie-grid .movie-card:nth-child(2) { animation-delay: 0.1s; }
+    .movie-grid .movie-card:nth-child(3) { animation-delay: 0.2s; }
+    .movie-grid .movie-card:nth-child(4) { animation-delay: 0.3s; }
+    .movie-grid .movie-card:nth-child(5) { animation-delay: 0.4s; }
+    .movie-grid .movie-card:nth-child(6) { animation-delay: 0.5s; }
+    .movie-grid .movie-card:nth-child(7) { animation-delay: 0.6s; }
+    .movie-grid .movie-card:nth-child(8) { animation-delay: 0.7s; }
+    .movie-grid .movie-card:nth-child(9) { animation-delay: 0.8s; }
+    .movie-grid .movie-card:nth-child(10) { animation-delay: 0.9s; }
+    .movie-grid .movie-card:nth-child(11) { animation-delay: 1.0s; }
+    .movie-grid .movie-card:nth-child(12) { animation-delay: 1.1s; }
+    
+    .movie-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 15px;
+    }
+    
+    .movie-card:hover {
+      transform: scale(1.08);
+      z-index: 10;
+      box-shadow: 0 10px 30px rgba(229, 9, 20, 0.5);
+    }
+    
+    .title-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 15px 10px;
+      background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: left;
+      border-radius: 0 0 15px 15px;
+    }
+    
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      background-color: rgba(0,0,0,0.95);
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .modal-content {
+      background-color: #181818;
+      border-radius: 10px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 800px;
+      margin: 50px auto;
+      position: relative;
+      color: #ddd;
+      animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    .modal-content img {
+      float: left;
+      width: 35%;
+      min-width: 200px;
+      border-radius: 10px;
+      margin-right: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .modal-info h2 {
+      margin-top: 0;
+      color: #e50914;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .close-btn:hover {
+      color: #e50914;
+      transform: scale(1.2);
+    }
+    
+    footer {
+      text-align: center;
+      color: #666;
+      padding: 2rem;
+      margin-top: 4rem;
+      border-top: 1px solid #222;
+    }
+    
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem;
+      }
+      
+      .movie-row {
+        padding: 1rem;
+      }
+      
+      .carousel-wrapper {
+        padding: 0 50px;
+      }
+      
+      .modal-content img {
+        float: none;
+        width: 100%;
+        margin-right: 0;
+      }
+    }
+  </style>
 </head>
-
 <body>
-    <!-- Background Video -->
-    <video autoplay muted loop playsinline id="bg-video" poster="/static/bg-placeholder.jpg">
-    <source src="/static/bg-video.mp4" type="video/mp4">
-</video>
+  <header>
+    <h1>🎬 MovieFlix</h1>
+  </header>
 
-<script>
-    const video = document.getElementById("bg-video");
-    video.addEventListener("loadeddata", () => {
-        video.style.opacity = "1";
-    });
-</script>
-
-<style>
-#bg-video {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-}
-</style>
-
-
-<style>
-#bg-video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -2;
-    filter: brightness(0.35) blur(2px);
-}
-</style>
-
-
-<!-- ===== NAVBAR ===== -->
-<nav>
-    <div class="nav-container">
-        <div class="nav-logo">
-            <span class="logo-text">Movie Recommendation System</span> 🎬
-        </div>
-        <div class="nav-links">
-            <a href="https://mrs-gg4b.onrender.com/" title="Home">
-                <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home">
-            </a>
-            <a href="https://github.com/Dipanshuwiithi/MRS" target="_blank" title="GitHub Repository">
-                <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub">
-            </a>
-            <a href="https://github.com/Dipanshuwiithi" title="About">
-                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="About">
-            </a>
-        </div>
-    </div>
-</nav>
-
-<style>
-/* ===== NAVBAR ===== */
-nav {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(25, 25, 25, 0.6);
-    backdrop-filter: blur(12px);
-    border-radius: 50px;
-    padding: 10px 25px;
-    box-shadow: 0 0 20px rgba(255, 75, 43, 0.3);
-    z-index: 999;
-    width: fit-content;
-    animation: pulseGlow 3s ease-in-out infinite alternate;
-}
-
-/* Pulse animation for glow */
-@keyframes pulseGlow {
-    0% { box-shadow: 0 0 10px rgba(255, 75, 43, 0.2); }
-    100% { box-shadow: 0 0 25px rgba(255, 75, 43, 0.6); }
-}
-
-.nav-container {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.logo-text {
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    color: #ff4b2b;
-    text-shadow: 0 0 8px #ff1c00;
-}
-
-.nav-links {
-    display: flex;
-    gap: 10px;
-}
-
-.nav-links a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 75, 43, 0.15);
-    border-radius: 50%;
-    padding: 6px;
-    width: 34px;
-    height: 34px;
-    transition: all 0.3s ease;
-}
-
-.nav-links a img {
-    width: 20px;
-    height: 20px;
-    filter: invert(1);
-    opacity: 0.8;
-}
-
-.nav-links a:hover {
-    background: rgba(255, 75, 43, 0.5);
-    box-shadow: 0 0 12px rgba(255, 75, 43, 0.6);
-    transform: scale(1.1);
-}
-
-@media (max-width: 600px) {
-    nav {
-        top: 10px;
-        padding: 8px 18px;
-    }
-    .nav-links a {
-        width: 30px;
-        height: 30px;
-    }
-    .nav-links a img {
-        width: 16px;
-        height: 16px;
-    }
-}
-</style>
-
-    <!-- Title -->
-    <h1>Find Your Next Favourite Movie 🍿</h1>
-
-    <!-- Form -->
-    <form method="POST" autocomplete="off">
-    <div class="autocomplete-container" style="position: relative; width: 320px; margin: auto;">
-        <input 
-            type="text" 
-            name="movie" 
-            id="movie-input" 
-            placeholder="Type or select a movie..." 
-            required
-            style="
-                padding: 12px;
-                width: 100%;
-                border-radius: 8px;
-                border: none;
-                outline: none;
-                font-size: 15px;
-                background-color: rgba(34, 34, 34, 0.8);
-                color: #fff;
-                box-shadow: 0 0 10px rgba(255, 75, 43, 0.2);
-            "
-        >
-        <div id="autocomplete-list" 
-             style="
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: rgba(28,28,28,0.95);
-                max-height: 200px;
-                overflow-y: auto;
-                border-radius: 0 0 8px 8px;
-                z-index: 999;
-                display: none;
-             ">
-        </div>
-    </div>
-    <button type="submit" style="margin-top: 15px;">Show Recommendations</button>
-</form>
-
-<!-- JavaScript for typeahead -->
-<script>
-    const movieList = [
-        {% for movie in movie_list %}
-            "{{ movie }}",
-        {% endfor %}
-    ];
-
-    const input = document.getElementById("movie-input");
-    const autocompleteList = document.getElementById("autocomplete-list");
-
-    input.addEventListener("input", function() {
-        const val = this.value.toLowerCase();
-        autocompleteList.innerHTML = "";
-        if (!val) { autocompleteList.style.display = "none"; return; }
-
-        const filtered = movieList.filter(m => m.toLowerCase().includes(val));
-        if (filtered.length === 0) { autocompleteList.style.display = "none"; return; }
-
-        filtered.forEach(movie => {
-            const div = document.createElement("div");
-            div.textContent = movie;
-            div.style.padding = "8px";
-            div.style.cursor = "pointer";
-            div.style.color = "#fff";
-            div.addEventListener("click", () => {
-                input.value = movie;
-                autocompleteList.innerHTML = "";
-                autocompleteList.style.display = "none";
-            });
-            div.addEventListener("mouseover", () => div.style.background = "rgba(255,75,43,0.3)");
-            div.addEventListener("mouseout", () => div.style.background = "transparent");
-            autocompleteList.appendChild(div);
-        });
-
-        autocompleteList.style.display = "block";
-    });
-
-    // Hide list when clicking outside
-    document.addEventListener("click", function(e) {
-        if (!e.target.closest(".autocomplete-container")) {
-            autocompleteList.style.display = "none";
-        }
-    });
-</script>
-
-    <!-- Recommendations -->
-    {% if recommendations %}
-        <h2>Top 5 Recommendations for "{{ selected_movie }}"</h2>
-        <div class="movies">
-            {% for rec in recommendations %}
-                <div class="movie-card">
-                    <img src="{{ rec.poster }}" alt="{{ rec.title }}">
-                    <h3>{{ rec.title }}</h3>
-                    <p>Year: {{ rec.year }}</p>
-                    <p>⭐ Rating: {{ rec.rating }}</p>
-                </div>
-            {% endfor %}
-        </div>
+  <form method="POST">
+    <input list="movies" name="movie" placeholder="Search for a movie..." required />
+    <datalist id="movies">
+      {% for movie in movie_list %}
+      <option value="{{ movie }}"></option>
+      {% endfor %}
+    </datalist>
+    <button type="submit">Search</button>
+    {% if selected_movie %}
+    <a href="/" style="display: inline-block; padding: 0.75rem 1rem; background-color: #333; color: #fff; text-decoration: none; border-radius: 4px; margin-left: 10px; transition: background-color 0.3s ease;">Back to Homepage</a>
     {% endif %}
+  </form>
+
+  {% if selected_movie %}
+    <!-- Show recommendations when movie is selected -->
+    <div class="movie-row">
+      <h2>Recommended for "{{ selected_movie }}"</h2>
+      <div class="movie-grid">
+        {% for movie in recommendations %}
+        <div class="movie-card" data-title="{{ movie.title }}" data-poster="{{ movie.poster }}" data-genre="{{ movie.genres|join(', ') }}" data-rating="{{ movie.rating }}" data-cast="{{ movie.cast }}" data-overview="{{ movie.overview }}">
+          <img src="{{ movie.poster }}" alt="{{ movie.title }}" loading="lazy">
+          <div class="title-overlay">{{ movie.title }} ({{ movie.year }})</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% elif top_movies %}
+    <!-- Show top movies by genre on homepage -->
+    {% for genre, movies in top_movies.items() %}
+    <div class="movie-row">
+      <h2>{{ genre }}</h2>
+      <div class="movie-grid">
+        {% for movie in movies %}
+        <div class="movie-card" data-title="{{ movie.title }}" data-poster="{{ movie.poster }}" data-genre="{{ genre }}" data-rating="{{ movie.rating }}" data-overview="">
+          <img src="{{ movie.poster }}" alt="{{ movie.title }}" loading="lazy">
+          <div class="title-overlay">{{ movie.title }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Modal -->
+  <div id="movieModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <img id="modalPoster" src="" alt="Poster">
+      <div class="modal-info">
+        <h2 id="modalTitle"></h2>
+        <p><strong>Genre:</strong> <span id="modalGenre"></span></p>
+        <p><strong>Rating:</strong> ⭐ <span id="modalRating"></span></p>
+        <p><strong>Cast:</strong> <span id="modalCast"></span></p>
+        <p id="modalOverview"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comedy Movies Carousel -->
+  <h2 style="text-align: left; padding-left: 3rem; font-size: 1.5rem; margin-top: 3rem;">Comedy</h2>
+  <div class="carousel-wrapper">
+    <button class="carousel-btn prev" data-target="carousel-comedy" aria-label="Previous movies">‹</button>
+    <div class="carousel-container">
+      <div class="carousel-track" id="carousel-comedy">
+        <div class="movie-card" data-title="Little Big Top" data-poster="https://image.tmdb.org/t/p/w500//kLyiTbf0lRSZrISYMN67VuapRyP.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//kLyiTbf0lRSZrISYMN67VuapRyP.jpg" alt="Little Big Top" loading="lazy">
+          <div class="title-overlay">Little Big Top</div>
+        </div>
+        <div class="movie-card" data-title="Me You and Five Bucks" data-poster="https://image.tmdb.org/t/p/w500//ukQf5WWnLerLsMR1bo33HmQ6EUG.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//ukQf5WWnLerLsMR1bo33HmQ6EUG.jpg" alt="Me You and Five Bucks" loading="lazy">
+          <div class="title-overlay">Me You and Five Bucks</div>
+        </div>
+        <div class="movie-card" data-title="Dancer, Texas Pop. 81" data-poster="https://image.tmdb.org/t/p/w500//khV9zPcvgOjrqwlk3dI1lGojZib.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//khV9zPcvgOjrqwlk3dI1lGojZib.jpg" alt="Dancer, Texas Pop. 81" loading="lazy">
+          <div class="title-overlay">Dancer, Texas Pop. 81</div>
+        </div>
+        <div class="movie-card" data-title="Stiff Upper Lips" data-poster="https://image.tmdb.org/t/p/w500//3BKL5t6z6kudeDmuwYiIF5dzAV8.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//3BKL5t6z6kudeDmuwYiIF5dzAV8.jpg" alt="Stiff Upper Lips" loading="lazy">
+          <div class="title-overlay">Stiff Upper Lips</div>
+        </div>
+        <div class="movie-card" data-title="There Goes My Baby" data-poster="https://image.tmdb.org/t/p/w500//lxvY6as28ykgbPEuvZ5T29am99L.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//lxvY6as28ykgbPEuvZ5T29am99L.jpg" alt="There Goes My Baby" loading="lazy">
+          <div class="title-overlay">There Goes My Baby</div>
+        </div>
+        <div class="movie-card" data-title="Forrest Gump" data-poster="https://image.tmdb.org/t/p/w500//saHP97rTPS5eLmrLQEcANmKrsFl.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//saHP97rTPS5eLmrLQEcANmKrsFl.jpg" alt="Forrest Gump" loading="lazy">
+          <div class="title-overlay">Forrest Gump</div>
+        </div>
+        <div class="movie-card" data-title="Love Jones" data-poster="https://image.tmdb.org/t/p/w500//7LdKsfON12uEyDEKY9mZASlx8Nf.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//7LdKsfON12uEyDEKY9mZASlx8Nf.jpg" alt="Love Jones" loading="lazy">
+          <div class="title-overlay">Love Jones</div>
+        </div>
+        <div class="movie-card" data-title="Modern Times" data-poster="https://image.tmdb.org/t/p/w500//7uoiKOEjxBBW0AgDGQWrlfGQ90w.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//7uoiKOEjxBBW0AgDGQWrlfGQ90w.jpg" alt="Modern Times" loading="lazy">
+          <div class="title-overlay">Modern Times</div>
+        </div>
+        <div class="movie-card" data-title="The Apartment" data-poster="https://image.tmdb.org/t/p/w500//hhSRt1KKfRT0yEhEtRW3qp31JFU.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//hhSRt1KKfRT0yEhEtRW3qp31JFU.jpg" alt="The Apartment" loading="lazy">
+          <div class="title-overlay">The Apartment</div>
+        </div>
+        <div class="movie-card" data-title="Karachi se Lahore" data-poster="https://image.tmdb.org/t/p/w500//aOloA4NcNoa9NhyRdbEO99G79hx.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//aOloA4NcNoa9NhyRdbEO99G79hx.jpg" alt="Karachi se Lahore" loading="lazy">
+          <div class="title-overlay">Karachi se Lahore</div>
+        </div>
+        <div class="movie-card" data-title="Some Like It Hot" data-poster="https://image.tmdb.org/t/p/w500//hVIKyTK13AvOGv7ICmJjK44DTzp.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//hVIKyTK13AvOGv7ICmJjK44DTzp.jpg" alt="Some Like It Hot" loading="lazy">
+          <div class="title-overlay">Some Like It Hot</div>
+        </div>
+        <div class="movie-card" data-title="Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb" data-poster="https://image.tmdb.org/t/p/w500//7SixLzxcqezkZEYU8pcHZgbkmjp.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//7SixLzxcqezkZEYU8pcHZgbkmjp.jpg" alt="Dr. Strangelove" loading="lazy">
+          <div class="title-overlay">Dr. Strangelove</div>
+        </div>
+        <div class="movie-card" data-title="Back to the Future" data-poster="https://image.tmdb.org/t/p/w500//vN5B5WgYscRGcQpVhHl6p9DDTP0.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//vN5B5WgYscRGcQpVhHl6p9DDTP0.jpg" alt="Back to the Future" loading="lazy">
+          <div class="title-overlay">Back to the Future</div>
+        </div>
+        <div class="movie-card" data-title="The Grand Budapest Hotel" data-poster="https://image.tmdb.org/t/p/w500//eWdyYQreja6JGCzqHWXpWHDrrPo.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//eWdyYQreja6JGCzqHWXpWHDrrPo.jpg" alt="The Grand Budapest Hotel" loading="lazy">
+          <div class="title-overlay">The Grand Budapest Hotel</div>
+        </div>
+        <div class="movie-card" data-title="The Jimmy Show" data-poster="https://image.tmdb.org/t/p/w500//sqH5e5goeThOmM4DqrrjVQOIuw2.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//sqH5e5goeThOmM4DqrrjVQOIuw2.jpg" alt="The Jimmy Show" loading="lazy">
+          <div class="title-overlay">The Jimmy Show</div>
+        </div>
+        <div class="movie-card" data-title="Inside Out" data-poster="https://image.tmdb.org/t/p/w500//2H1TmgdfNtsKlU9jKdeNyYL5y8T.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//2H1TmgdfNtsKlU9jKdeNyYL5y8T.jpg" alt="Inside Out" loading="lazy">
+          <div class="title-overlay">Inside Out</div>
+        </div>
+        <div class="movie-card" data-title="The Wolf of Wall Street" data-poster="https://image.tmdb.org/t/p/w500//kW9LmvYHAaS9iA0tHmZVq8hQYoq.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//kW9LmvYHAaS9iA0tHmZVq8hQYoq.jpg" alt="The Wolf of Wall Street" loading="lazy">
+          <div class="title-overlay">The Wolf of Wall Street</div>
+        </div>
+        <div class="movie-card" data-title="The Sting" data-poster="https://image.tmdb.org/t/p/w500//4VdQopZb0lx13Me3yxE5rUXMGCI.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//4VdQopZb0lx13Me3yxE5rUXMGCI.jpg" alt="The Sting" loading="lazy">
+          <div class="title-overlay">The Sting</div>
+        </div>
+        <div class="movie-card" data-title="Mr. Smith Goes to Washington" data-poster="https://image.tmdb.org/t/p/w500//nDjg1fbNyq15excNDl3acd2IqAk.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//nDjg1fbNyq15excNDl3acd2IqAk.jpg" alt="Mr. Smith Goes to Washington" loading="lazy">
+          <div class="title-overlay">Mr. Smith Goes to Washington</div>
+        </div>
+        <div class="movie-card" data-title="Monty Python and the Holy Grail" data-poster="https://image.tmdb.org/t/p/w500//7nTkHjETdGMYK1phHwDbPsrzbYl.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//7nTkHjETdGMYK1phHwDbPsrzbYl.jpg" alt="Monty Python and the Holy Grail" loading="lazy">
+          <div class="title-overlay">Monty Python and the Holy Grail</div>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-btn next" data-target="carousel-comedy" aria-label="Next movies">›</button>
+  </div>
+
+  <!-- Drama Movies Carousel -->
+  <h2 style="text-align: left; padding-left: 3rem; font-size: 1.5rem; margin-top: 3rem;">Drama</h2>
+  <div class="carousel-wrapper">
+    <button class="carousel-btn prev" data-target="carousel-drama" aria-label="Previous movies">‹</button>
+    <div class="carousel-container">
+      <div class="carousel-track" id="carousel-drama">
+        <div class="movie-card" data-title="Dancer, Texas Pop. 81" data-poster="https://image.tmdb.org/t/p/w500//khV9zPcvgOjrqwlk3dI1lGojZib.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//khV9zPcvgOjrqwlk3dI1lGojZib.jpg" alt="Dancer, Texas Pop. 81" loading="lazy">
+          <div class="title-overlay">Dancer, Texas Pop. 81</div>
+        </div>
+        <div class="movie-card" data-title="Me You and Five Bucks" data-poster="https://image.tmdb.org/t/p/w500//ukQf5WWnLerLsMR1bo33HmQ6EUG.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//ukQf5WWnLerLsMR1bo33HmQ6EUG.jpg" alt="Me You and Five Bucks" loading="lazy">
+          <div class="title-overlay">Me You and Five Bucks</div>
+        </div>
+        <div class="movie-card" data-title="One Man's Hero" data-poster="https://image.tmdb.org/t/p/w500//6QbunsUllQT0aQWWgMBnSlqwrfF.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//6QbunsUllQT0aQWWgMBnSlqwrfF.jpg" alt="One Man's Hero" loading="lazy">
+          <div class="title-overlay">One Man's Hero</div>
+        </div>
+        <div class="movie-card" data-title="There Goes My Baby" data-poster="https://image.tmdb.org/t/p/w500//lxvY6as28ykgbPEuvZ5T29am99L.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//lxvY6as28ykgbPEuvZ5T29am99L.jpg" alt="There Goes My Baby" loading="lazy">
+          <div class="title-overlay">There Goes My Baby</div>
+        </div>
+        <div class="movie-card" data-title="The Shawshank Redemption" data-poster="https://image.tmdb.org/t/p/w500//9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg" alt="The Shawshank Redemption" loading="lazy">
+          <div class="title-overlay">The Shawshank Redemption</div>
+        </div>
+        <div class="movie-card" data-title="The Godfather" data-poster="https://image.tmdb.org/t/p/w500//3bhkrj58Vtu7enYsRolD1fZdja1.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//3bhkrj58Vtu7enYsRolD1fZdja1.jpg" alt="The Godfather" loading="lazy">
+          <div class="title-overlay">The Godfather</div>
+        </div>
+        <div class="movie-card" data-title="The Prisoner of Zenda" data-poster="https://image.tmdb.org/t/p/w500//tvMF7iljOgOXLvkVsWGr5GrPE4j.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//tvMF7iljOgOXLvkVsWGr5GrPE4j.jpg" alt="The Prisoner of Zenda" loading="lazy">
+          <div class="title-overlay">The Prisoner of Zenda</div>
+        </div>
+        <div class="movie-card" data-title="Schindler's List" data-poster="https://image.tmdb.org/t/p/w500//sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg" alt="Schindler's List" loading="lazy">
+          <div class="title-overlay">Schindler's List</div>
+        </div>
+        <div class="movie-card" data-title="The Godfather: Part II" data-poster="https://image.tmdb.org/t/p/w500//hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg" alt="The Godfather: Part II" loading="lazy">
+          <div class="title-overlay">The Godfather: Part II</div>
+        </div>
+        <div class="movie-card" data-title="Fight Club" data-poster="https://image.tmdb.org/t/p/w500//pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg" alt="Fight Club" loading="lazy">
+          <div class="title-overlay">Fight Club</div>
+        </div>
+        <div class="movie-card" data-title="Whiplash" data-poster="https://image.tmdb.org/t/p/w500//7fn624j5lj3xTme2SgiLCeuedmO.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//7fn624j5lj3xTme2SgiLCeuedmO.jpg" alt="Whiplash" loading="lazy">
+          <div class="title-overlay">Whiplash</div>
+        </div>
+        <div class="movie-card" data-title="The Dark Knight" data-poster="https://image.tmdb.org/t/p/w500//qJ2tW6WMUDux911r6m7haRef0WH.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="The Dark Knight" loading="lazy">
+          <div class="title-overlay">The Dark Knight</div>
+        </div>
+        <div class="movie-card" data-title="GoodFellas" data-poster="https://image.tmdb.org/t/p/w500//aKuFiU82s5ISJpGZp7YkIr3kCUd.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//aKuFiU82s5ISJpGZp7YkIr3kCUd.jpg" alt="GoodFellas" loading="lazy">
+          <div class="title-overlay">GoodFellas</div>
+        </div>
+        <div class="movie-card" data-title="Psycho" data-poster="https://image.tmdb.org/t/p/w500//yz4QVqPx3h1hD1DfqqQkCq3rmxW.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//yz4QVqPx3h1hD1DfqqQkCq3rmxW.jpg" alt="Psycho" loading="lazy">
+          <div class="title-overlay">Psycho</div>
+        </div>
+        <div class="movie-card" data-title="Forrest Gump" data-poster="https://image.tmdb.org/t/p/w500//saHP97rTPS5eLmrLQEcANmKrsFl.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//saHP97rTPS5eLmrLQEcANmKrsFl.jpg" alt="Forrest Gump" loading="lazy">
+          <div class="title-overlay">Forrest Gump</div>
+        </div>
+        <div class="movie-card" data-title="Anne of Green Gables" data-poster="https://image.tmdb.org/t/p/w500//z1owlDzKO3DQpFKNFBnuQlPF891.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//z1owlDzKO3DQpFKNFBnuQlPF891.jpg" alt="Anne of Green Gables" loading="lazy">
+          <div class="title-overlay">Anne of Green Gables</div>
+        </div>
+        <div class="movie-card" data-title="Seven Samurai" data-poster="https://image.tmdb.org/t/p/w500//lOMGc8bnSwQhS4XyE1S99uH8NXf.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//lOMGc8bnSwQhS4XyE1S99uH8NXf.jpg" alt="Seven Samurai" loading="lazy">
+          <div class="title-overlay">Seven Samurai</div>
+        </div>
+        <div class="movie-card" data-title="12 Angry Men" data-poster="https://image.tmdb.org/t/p/w500//ow3wq89wM8qd5X7hWKxiRfsFf9C.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//ow3wq89wM8qd5X7hWKxiRfsFf9C.jpg" alt="12 Angry Men" loading="lazy">
+          <div class="title-overlay">12 Angry Men</div>
+        </div>
+        <div class="movie-card" data-title="One Flew Over the Cuckoo's Nest" data-poster="https://image.tmdb.org/t/p/w500//kjWsMh72V6d8KRLV4EOoSJLT1H7.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//kjWsMh72V6d8KRLV4EOoSJLT1H7.jpg" alt="One Flew Over the Cuckoo's Nest" loading="lazy">
+          <div class="title-overlay">One Flew Over the Cuckoo's Nest</div>
+        </div>
+        <div class="movie-card" data-title="Once Upon a Time in America" data-poster="https://image.tmdb.org/t/p/w500//i0enkzsL5dPeneWnjl1fCWm6L7k.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//i0enkzsL5dPeneWnjl1fCWm6L7k.jpg" alt="Once Upon a Time in America" loading="lazy">
+          <div class="title-overlay">Once Upon a Time in America</div>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-btn next" data-target="carousel-drama" aria-label="Next movies">›</button>
+  </div>
+
+  <!-- Action Movies Carousel -->
+  <h2 style="text-align: left; padding-left: 3rem; font-size: 1.5rem; margin-top: 3rem;">Action</h2>
+  <div class="carousel-wrapper">
+    <button class="carousel-btn prev" data-target="carousel-action" aria-label="Previous movies">‹</button>
+    <div class="carousel-container">
+      <div class="carousel-track" id="carousel-action">
+        <div class="movie-card" data-title="One Man's Hero" data-poster="https://image.tmdb.org/t/p/w500//6QbunsUllQT0aQWWgMBnSlqwrfF.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//6QbunsUllQT0aQWWgMBnSlqwrfF.jpg" alt="One Man's Hero" loading="lazy">
+          <div class="title-overlay">One Man's Hero</div>
+        </div>
+        <div class="movie-card" data-title="Seven Samurai" data-poster="https://image.tmdb.org/t/p/w500//lOMGc8bnSwQhS4XyE1S99uH8NXf.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//lOMGc8bnSwQhS4XyE1S99uH8NXf.jpg" alt="Seven Samurai" loading="lazy">
+          <div class="title-overlay">Seven Samurai</div>
+        </div>
+        <div class="movie-card" data-title="The Dark Knight" data-poster="https://image.tmdb.org/t/p/w500//qJ2tW6WMUDux911r6m7haRef0WH.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="The Dark Knight" loading="lazy">
+          <div class="title-overlay">The Dark Knight</div>
+        </div>
+        <div class="movie-card" data-title="The Empire Strikes Back" data-poster="https://image.tmdb.org/t/p/w500//nNAeTmF4CtdSgMDplXTDPOpYzsX.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//nNAeTmF4CtdSgMDplXTDPOpYzsX.jpg" alt="The Empire Strikes Back" loading="lazy">
+          <div class="title-overlay">The Empire Strikes Back</div>
+        </div>
+        <div class="movie-card" data-title="Star Wars" data-poster="https://image.tmdb.org/t/p/w500//6FfCtAuVAW8XJjZ7eWeLibRLWTw.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//6FfCtAuVAW8XJjZ7eWeLibRLWTw.jpg" alt="Star Wars" loading="lazy">
+          <div class="title-overlay">Star Wars</div>
+        </div>
+        <div class="movie-card" data-title="Inception" data-poster="https://image.tmdb.org/t/p/w500//ljsZTbVsrQSqZgWeep2B1QiDKuh.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//ljsZTbVsrQSqZgWeep2B1QiDKuh.jpg" alt="Inception" loading="lazy">
+          <div class="title-overlay">Inception</div>
+        </div>
+        <div class="movie-card" data-title="The Lord of the Rings: The Return of the King" data-poster="https://image.tmdb.org/t/p/w500//rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg" alt="The Lord of the Rings: The Return of the King" loading="lazy">
+          <div class="title-overlay">The Lord of the Rings: The Return of the King</div>
+        </div>
+        <div class="movie-card" data-title="Star Wars: Clone Wars: Volume 1" data-poster="https://placehold.co/500x750/333/FFFFFF?text=No+Poster">
+          <img src="https://placehold.co/500x750/333/FFFFFF?text=No+Poster" alt="Star Wars: Clone Wars: Volume 1" loading="lazy">
+          <div class="title-overlay">Star Wars: Clone Wars: Volume 1</div>
+        </div>
+        <div class="movie-card" data-title="The Lord of the Rings: The Fellowship of the Ring" data-poster="https://image.tmdb.org/t/p/w500//6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg" alt="The Lord of the Rings: The Fellowship of the Ring" loading="lazy">
+          <div class="title-overlay">The Lord of the Rings: The Fellowship of the Ring</div>
+        </div>
+        <div class="movie-card" data-title="The Lord of the Rings: The Two Towers" data-poster="https://image.tmdb.org/t/p/w500//5VTN0pR8gcqV3EPUHHfMGnJYN9L.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//5VTN0pR8gcqV3EPUHHfMGnJYN9L.jpg" alt="The Lord of the Rings: The Two Towers" loading="lazy">
+          <div class="title-overlay">The Lord of the Rings: The Two Towers</div>
+        </div>
+        <div class="movie-card" data-title="Scarface" data-poster="https://image.tmdb.org/t/p/w500//iQ5ztdjvteGeboxtmRdXEChJOHh.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//iQ5ztdjvteGeboxtmRdXEChJOHh.jpg" alt="Scarface" loading="lazy">
+          <div class="title-overlay">Scarface</div>
+        </div>
+        <div class="movie-card" data-title="Oldboy" data-poster="https://image.tmdb.org/t/p/w500//pWDtjs568ZfOTMbURQBYuT4Qxka.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//pWDtjs568ZfOTMbURQBYuT4Qxka.jpg" alt="Oldboy" loading="lazy">
+          <div class="title-overlay">Oldboy</div>
+        </div>
+        <div class="movie-card" data-title="Alien" data-poster="https://image.tmdb.org/t/p/w500//vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg" alt="Alien" loading="lazy">
+          <div class="title-overlay">Alien</div>
+        </div>
+        <div class="movie-card" data-title="Das Boot" data-poster="https://image.tmdb.org/t/p/w500//u8FhQPncOAkwcei2OI9orPWhV6K.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//u8FhQPncOAkwcei2OI9orPWhV6K.jpg" alt="Das Boot" loading="lazy">
+          <div class="title-overlay">Das Boot</div>
+        </div>
+        <div class="movie-card" data-title="Guardians of the Galaxy" data-poster="https://image.tmdb.org/t/p/w500//r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg" alt="Guardians of the Galaxy" loading="lazy">
+          <div class="title-overlay">Guardians of the Galaxy</div>
+        </div>
+        <div class="movie-card" data-title="Batman: The Dark Knight Returns, Part 2" data-poster="https://image.tmdb.org/t/p/w500//arEZYd6uMOFTILne9Ux0A8qctMe.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//arEZYd6uMOFTILne9Ux0A8qctMe.jpg" alt="Batman: The Dark Knight Returns, Part 2" loading="lazy">
+          <div class="title-overlay">Batman: The Dark Knight Returns, Part 2</div>
+        </div>
+        <div class="movie-card" data-title="Gladiator" data-poster="https://image.tmdb.org/t/p/w500//ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg" alt="Gladiator" loading="lazy">
+          <div class="title-overlay">Gladiator</div>
+        </div>
+        <div class="movie-card" data-title="Inglourious Basterds" data-poster="https://image.tmdb.org/t/p/w500//7sfbEnaARXDDhKm0CZ7D7uc2sbo.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//7sfbEnaARXDDhKm0CZ7D7uc2sbo.jpg" alt="Inglourious Basterds" loading="lazy">
+          <div class="title-overlay">Inglourious Basterds</div>
+        </div>
+        <div class="movie-card" data-title="Return of the Jedi" data-poster="https://image.tmdb.org/t/p/w500//jQYlydvHm3kUix1f8prMucrplhm.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//jQYlydvHm3kUix1f8prMucrplhm.jpg" alt="Return of the Jedi" loading="lazy">
+          <div class="title-overlay">Return of the Jedi</div>
+        </div>
+        <div class="movie-card" data-title="The Matrix" data-poster="https://image.tmdb.org/t/p/w500//p96dm7sCMn4VYAStA6siNz30G1r.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//p96dm7sCMn4VYAStA6siNz30G1r.jpg" alt="The Matrix" loading="lazy">
+          <div class="title-overlay">The Matrix</div>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-btn next" data-target="carousel-action" aria-label="Next movies">›</button>
+  </div>
+
+  <!-- Top Rated Movies Carousel -->
+  <h2 style="text-align: left; padding-left: 3rem; font-size: 1.5rem; margin-top: 3rem;">Top Rated Movies</h2>
+  <div class="carousel-wrapper">
+    <button class="carousel-btn prev" data-target="carousel-top-rated" aria-label="Previous movies">‹</button>
+    <div class="carousel-container">
+      <div class="carousel-track" id="carousel-top-rated">
+        <div class="movie-card" data-title="Sardaarji" data-poster="https://image.tmdb.org/t/p/w500//f44yO1FafCLn0KM75LFRnFRo3Yn.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//f44yO1FafCLn0KM75LFRnFRo3Yn.jpg" alt="Sardaarji" loading="lazy">
+          <div class="title-overlay">Sardaarji</div>
+        </div>
+        <div class="movie-card" data-title="One Man's Hero" data-poster="https://image.tmdb.org/t/p/w500//6QbunsUllQT0aQWWgMBnSlqwrfF.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//6QbunsUllQT0aQWWgMBnSlqwrfF.jpg" alt="One Man's Hero" loading="lazy">
+          <div class="title-overlay">One Man's Hero</div>
+        </div>
+        <div class="movie-card" data-title="There Goes My Baby" data-poster="https://image.tmdb.org/t/p/w500//lxvY6as28ykgbPEuvZ5T29am99L.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//lxvY6as28ykgbPEuvZ5T29am99L.jpg" alt="There Goes My Baby" loading="lazy">
+          <div class="title-overlay">There Goes My Baby</div>
+        </div>
+        <div class="movie-card" data-title="The Shawshank Redemption" data-poster="https://image.tmdb.org/t/p/w500//9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg" alt="The Shawshank Redemption" loading="lazy">
+          <div class="title-overlay">The Shawshank Redemption</div>
+        </div>
+        <div class="movie-card" data-title="The Prisoner of Zenda" data-poster="https://image.tmdb.org/t/p/w500//tvMF7iljOgOXLvkVsWGr5GrPE4j.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//tvMF7iljOgOXLvkVsWGr5GrPE4j.jpg" alt="The Prisoner of Zenda" loading="lazy">
+          <div class="title-overlay">The Prisoner of Zenda</div>
+        </div>
+        <div class="movie-card" data-title="The Godfather" data-poster="https://image.tmdb.org/t/p/w500//3bhkrj58Vtu7enYsRolD1fZdja1.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//3bhkrj58Vtu7enYsRolD1fZdja1.jpg" alt="The Godfather" loading="lazy">
+          <div class="title-overlay">The Godfather</div>
+        </div>
+        <div class="movie-card" data-title="Counting" data-poster="https://image.tmdb.org/t/p/w500//lQzBtr4ganEcNiXxJMnWil1zibr.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//lQzBtr4ganEcNiXxJMnWil1zibr.jpg" alt="Counting" loading="lazy">
+          <div class="title-overlay">Counting</div>
+        </div>
+        <div class="movie-card" data-title="Pulp Fiction" data-poster="https://image.tmdb.org/t/p/w500//vQWk5YBFWF4bZaofAbv0tShwBvQ.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//vQWk5YBFWF4bZaofAbv0tShwBvQ.jpg" alt="Pulp Fiction" loading="lazy">
+          <div class="title-overlay">Pulp Fiction</div>
+        </div>
+        <div class="movie-card" data-title="The Godfather: Part II" data-poster="https://image.tmdb.org/t/p/w500//hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//hek3koDUyRQk7FIhPXsa6mT2Zc3.jpg" alt="The Godfather: Part II" loading="lazy">
+          <div class="title-overlay">The Godfather: Part II</div>
+        </div>
+        <div class="movie-card" data-title="Fight Club" data-poster="https://image.tmdb.org/t/p/w500//pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg" alt="Fight Club" loading="lazy">
+          <div class="title-overlay">Fight Club</div>
+        </div>
+        <div class="movie-card" data-title="Whiplash" data-poster="https://image.tmdb.org/t/p/w500//7fn624j5lj3xTme2SgiLCeuedmO.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//7fn624j5lj3xTme2SgiLCeuedmO.jpg" alt="Whiplash" loading="lazy">
+          <div class="title-overlay">Whiplash</div>
+        </div>
+        <div class="movie-card" data-title="Schindler's List" data-poster="https://image.tmdb.org/t/p/w500//sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg" alt="Schindler's List" loading="lazy">
+          <div class="title-overlay">Schindler's List</div>
+        </div>
+        <div class="movie-card" data-title="Spirited Away" data-poster="https://image.tmdb.org/t/p/w500//39wmItIWsg5sZMyRUHLkWBcuVCM.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//39wmItIWsg5sZMyRUHLkWBcuVCM.jpg" alt="Spirited Away" loading="lazy">
+          <div class="title-overlay">Spirited Away</div>
+        </div>
+        <div class="movie-card" data-title="Howl's Moving Castle" data-poster="https://image.tmdb.org/t/p/w500//13kOl2v0nD2OLbVSHnHk8GUFEhO.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//13kOl2v0nD2OLbVSHnHk8GUFEhO.jpg" alt="Howl's Moving Castle" loading="lazy">
+          <div class="title-overlay">Howl's Moving Castle</div>
+        </div>
+        <div class="movie-card" data-title="The Empire Strikes Back" data-poster="https://image.tmdb.org/t/p/w500//nNAeTmF4CtdSgMDplXTDPOpYzsX.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//nNAeTmF4CtdSgMDplXTDPOpYzsX.jpg" alt="The Empire Strikes Back" loading="lazy">
+          <div class="title-overlay">The Empire Strikes Back</div>
+        </div>
+        <div class="movie-card" data-title="12 Angry Men" data-poster="https://image.tmdb.org/t/p/w500//ow3wq89wM8qd5X7hWKxiRfsFf9C.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//ow3wq89wM8qd5X7hWKxiRfsFf9C.jpg" alt="12 Angry Men" loading="lazy">
+          <div class="title-overlay">12 Angry Men</div>
+        </div>
+        <div class="movie-card" data-title="Seven Samurai" data-poster="https://image.tmdb.org/t/p/w500//lOMGc8bnSwQhS4XyE1S99uH8NXf.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//lOMGc8bnSwQhS4XyE1S99uH8NXf.jpg" alt="Seven Samurai" loading="lazy">
+          <div class="title-overlay">Seven Samurai</div>
+        </div>
+        <div class="movie-card" data-title="Anne of Green Gables" data-poster="https://image.tmdb.org/t/p/w500//z1owlDzKO3DQpFKNFBnuQlPF891.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//z1owlDzKO3DQpFKNFBnuQlPF891.jpg" alt="Anne of Green Gables" loading="lazy">
+          <div class="title-overlay">Anne of Green Gables</div>
+        </div>
+        <div class="movie-card" data-title="Forrest Gump" data-poster="https://image.tmdb.org/t/p/w500//saHP97rTPS5eLmrLQEcANmKrsFl.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//saHP97rTPS5eLmrLQEcANmKrsFl.jpg" alt="Forrest Gump" loading="lazy">
+          <div class="title-overlay">Forrest Gump</div>
+        </div>
+        <div class="movie-card" data-title="The Visual Bible: The Gospel of John" data-poster="https://image.tmdb.org/t/p/w500//rKbmbnYfFhgTjGoDU9F4pIhVvKh.jpg">
+          <img src="https://image.tmdb.org/t/p/w500//rKbmbnYfFhgTjGoDU9F4pIhVvKh.jpg" alt="The Visual Bible: The Gospel of John" loading="lazy">
+          <div class="title-overlay">The Visual Bible: The Gospel of John</div>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-btn next" data-target="carousel-top-rated" aria-label="Next movies">›</button>
+  </div>
+
+  <footer>
+    <p>Made with ❤️ using Flask & TMDB API</p>
+  </footer>
+
+  <script>
+    // Modal Functions
+    function openModal(title, poster, genre, rating, cast, overview) {
+      document.getElementById("modalTitle").innerText = title;
+      document.getElementById("modalPoster").src = poster;
+      document.getElementById("modalGenre").innerText = genre || 'N/A';
+      document.getElementById("modalRating").innerText = rating || 'N/A';
+      document.getElementById("modalCast").innerText = cast || 'N/A';
+      document.getElementById("modalOverview").innerText = overview || 'No description available.';
+      document.getElementById("movieModal").style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      document.getElementById("movieModal").style.display = "none";
+      document.body.style.overflow = "auto";
+    }
+
+    // Event Listeners for Modal
+    document.querySelector('.close-btn').addEventListener('click', closeModal);
+    
+    window.onclick = function(event) {
+      const modal = document.getElementById("movieModal");
+      if (event.target == modal) {
+        closeModal();
+      }
+    };
+
+    // Keyboard support for modal
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    // Movie Card Click Handler (Event Delegation)
+    document.body.addEventListener('click', function(e) {
+      const card = e.target.closest('.movie-card');
+      if (card) {
+        const title = card.dataset.title || card.querySelector('.title-overlay').innerText;
+        const poster = card.dataset.poster || card.querySelector('img').src;
+        const genre = card.dataset.genre || '';
+        const rating = card.dataset.rating || '';
+        const cast = card.dataset.cast || '';
+        const overview = card.dataset.overview || '';
+        
+        openModal(title, poster, genre, rating, cast, overview);
+      }
+    });
+
+    // Carousel Navigation
+    document.querySelectorAll('.carousel-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevent modal from opening
+        const targetId = this.getAttribute('data-target');
+        const track = document.getElementById(targetId);
+        const scrollAmount = 500;
+        
+        if (this.classList.contains('prev')) {
+          track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        } else {
+          track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Keyboard navigation for carousels
+    document.addEventListener('keydown', function(e) {
+      if (document.getElementById("movieModal").style.display !== "flex") {
+        const tracks = document.querySelectorAll('.carousel-track');
+        if (e.key === 'ArrowLeft') {
+          tracks.forEach(track => {
+            track.scrollBy({ left: -500, behavior: 'smooth' });
+          });
+        } else if (e.key === 'ArrowRight') {
+          tracks.forEach(track => {
+            track.scrollBy({ left: 500, behavior: 'smooth' });
+          });
+        }
+      }
+    });
+  </script>
 </body>
 </html>
