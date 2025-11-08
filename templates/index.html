@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MovieFlix</title>
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/742/742751.png" />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
     
@@ -233,6 +235,66 @@
       font-weight: 600;
       text-align: left;
       border-radius: 0 0 15px 15px;
+    }
+    
+    /* Searched Movie Display */
+    .searched-movie-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    
+    .searched-movie-card {
+      background: linear-gradient(135deg, rgba(28, 28, 28, 0.95) 0%, rgba(18, 18, 18, 0.95) 100%);
+      border-radius: 20px;
+      padding: 2rem;
+      display: flex;
+      gap: 2rem;
+      box-shadow: 0 10px 40px rgba(229, 9, 20, 0.3);
+      border: 1px solid rgba(229, 9, 20, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .searched-movie-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 50px rgba(229, 9, 20, 0.4);
+    }
+    
+    .searched-movie-card img {
+      width: 300px;
+      height: 450px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    }
+    
+    .searched-movie-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .searched-movie-info h3 {
+      color: #e50914;
+      font-size: 2rem;
+      margin: 0 0 1rem 0;
+      text-shadow: 0 2px 10px rgba(229, 9, 20, 0.3);
+    }
+    
+    .searched-movie-info p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #ddd;
+    }
+    
+    .searched-movie-info .overview {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #bbb;
+      line-height: 1.8;
     }
     
     /* Modal */
