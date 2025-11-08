@@ -100,7 +100,7 @@
     
     .movie-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(6, 1fr);
       gap: 15px;
     }
     
@@ -248,8 +248,6 @@
       background: linear-gradient(135deg, rgba(28, 28, 28, 0.95) 0%, rgba(18, 18, 18, 0.95) 100%);
       border-radius: 20px;
       padding: 2rem;
-      display: flex;
-      gap: 2rem;
       box-shadow: 0 10px 40px rgba(229, 9, 20, 0.3);
       border: 1px solid rgba(229, 9, 20, 0.2);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -260,31 +258,25 @@
       box-shadow: 0 15px 50px rgba(229, 9, 20, 0.4);
     }
     
-    .searched-movie-card img {
-      width: 300px;
-      height: 450px;
+    .searched-poster {
+      width: 100%;
+      max-width: 250px;
+      height: auto;
       object-fit: cover;
       border-radius: 15px;
       box-shadow: 0 5px 20px rgba(0,0,0,0.5);
     }
     
-    .searched-movie-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    
     .searched-movie-info h3 {
       color: #e50914;
-      font-size: 2rem;
+      font-size: 1.8rem;
       margin: 0 0 1rem 0;
       text-shadow: 0 2px 10px rgba(229, 9, 20, 0.3);
     }
     
     .searched-movie-info p {
       margin: 0.5rem 0;
-      font-size: 1rem;
+      font-size: 0.95rem;
       line-height: 1.6;
       color: #ddd;
     }
@@ -326,6 +318,7 @@
       position: relative;
       color: #ddd;
       animation: slideUp 0.3s ease;
+      border: none;
     }
     
     @keyframes slideUp {
@@ -422,13 +415,19 @@
       <h2>You Searched For</h2>
       <div class="searched-movie-container">
         <div class="searched-movie-card">
-          <img src="{{ searched_movie_details.poster }}" alt="{{ searched_movie_details.title }}" loading="lazy">
-          <div class="searched-movie-info">
-            <h3>{{ searched_movie_details.title }} ({{ searched_movie_details.year }})</h3>
-            <p><strong>⭐ Rating:</strong> {{ searched_movie_details.rating }}/10</p>
-            <p><strong>🎭 Genres:</strong> {{ searched_movie_details.genres|join(', ') }}</p>
-            <p><strong>🎬 Cast:</strong> {{ searched_movie_details.cast }}</p>
-            <p class="overview">{{ searched_movie_details.overview }}</p>
+          <div class="row g-3 align-items-center">
+            <div class="col-12 col-md-4 col-lg-3 text-center">
+              <img src="{{ searched_movie_details.poster }}" alt="{{ searched_movie_details.title }}" class="searched-poster" loading="lazy">
+            </div>
+            <div class="col-12 col-md-8 col-lg-9">
+              <div class="searched-movie-info">
+                <h3>{{ searched_movie_details.title }} ({{ searched_movie_details.year }})</h3>
+                <p><strong>⭐ Rating:</strong> {{ searched_movie_details.rating }}/10</p>
+                <p><strong>🎭 Genres:</strong> {{ searched_movie_details.genres|join(', ') }}</p>
+                <p><strong>🎬 Cast:</strong> {{ searched_movie_details.cast }}</p>
+                <p class="overview">{{ searched_movie_details.overview }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -847,6 +846,9 @@
     <p>Made with ❤️ using Flask & TMDB API</p>
   </footer>
 
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
   <script>
     // Modal Functions
     function openModal(title, poster, genre, rating, cast, overview) {
