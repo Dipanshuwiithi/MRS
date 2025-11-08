@@ -115,13 +115,24 @@ def index():
     movie_list = movies['title'].tolist()
     recommendations = []
     selected_movie = None
+    searched_movie_details = None
     top_movies = get_top_movies_by_genre()
 
     # Only show recommendations on POST, not on page reload (GET)
     if request.method == 'POST':
         selected_movie = request.form.get('movie')
         if selected_movie:
+            # Get the searched movie details
+            try:
+                movie_row = movies[movies['title'] == selected_movie].iloc[0]
+                searched_movie_details = fetch_movie_details(movie_row.movie_id)
+            except (IndexError, AttributeError) as e:
+                print(f"Error fetching searched movie details: {e}")
+                searched_movie_details = None
+            
+            # Get recommendations
             recommendations = recommend(selected_movie)
+            
             # After showing recommendations, render without form data
             # This prevents form resubmission on reload
             return render_template(
@@ -129,6 +140,7 @@ def index():
                 movie_list=movie_list,
                 recommendations=recommendations,
                 selected_movie=selected_movie,
+                searched_movie_details=searched_movie_details,
                 top_movies=top_movies
             )
 
@@ -138,6 +150,7 @@ def index():
         movie_list=movie_list,
         recommendations=[],
         selected_movie=None,
+        searched_movie_details=None,
         top_movies=top_movies
     )
 
