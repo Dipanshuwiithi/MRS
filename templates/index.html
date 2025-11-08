@@ -354,9 +354,28 @@
   </form>
 
   {% if selected_movie %}
+    <!-- Show searched movie details at top -->
+    {% if searched_movie_details %}
+    <div class="movie-row">
+      <h2>You Searched For</h2>
+      <div class="searched-movie-container">
+        <div class="searched-movie-card">
+          <img src="{{ searched_movie_details.poster }}" alt="{{ searched_movie_details.title }}" loading="lazy">
+          <div class="searched-movie-info">
+            <h3>{{ searched_movie_details.title }} ({{ searched_movie_details.year }})</h3>
+            <p><strong>⭐ Rating:</strong> {{ searched_movie_details.rating }}/10</p>
+            <p><strong>🎭 Genres:</strong> {{ searched_movie_details.genres|join(', ') }}</p>
+            <p><strong>🎬 Cast:</strong> {{ searched_movie_details.cast }}</p>
+            <p class="overview">{{ searched_movie_details.overview }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    
     <!-- Show recommendations when movie is selected -->
     <div class="movie-row">
-      <h2>Recommended for "{{ selected_movie }}"</h2>
+      <h2>Recommended Movies Based on "{{ selected_movie }}"</h2>
       <div class="movie-grid">
         {% for movie in recommendations %}
         <div class="movie-card" data-title="{{ movie.title }}" data-poster="{{ movie.poster }}" data-genre="{{ movie.genres|join(', ') }}" data-rating="{{ movie.rating }}" data-cast="{{ movie.cast }}" data-overview="{{ movie.overview }}">
